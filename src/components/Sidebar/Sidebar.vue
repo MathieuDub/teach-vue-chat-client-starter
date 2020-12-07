@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div v-for="conversation in search_conversations" :key="conversation.id" class="conversation new" :title="conversation.id"  >
+      <div v-for="conversation in search_conversations" :key="conversation.id" class="conversation new" :title="conversation.title" @click="openConversation(conversation.id)">
         <a class="avatar">
           <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" />
         </a>
@@ -96,7 +96,7 @@ export default {
     search_conversations(){
       let filteredConversations;
       filteredConversations = this.conversations.filter((conversation) =>
-        conversation.title? conversation.title.toLowerCase().includes(this.search.toLowerCase()): "null"
+        conversation.title? conversation.title.toLowerCase().includes(this.search.toLowerCase()): ""
       );
 
       return filteredConversations;

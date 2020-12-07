@@ -35,23 +35,22 @@ export default new Vuex.Store({
       }));
     },
     conversations(state) {
-      state.conversations.sort( ( a, b) => {
-        return  new Date(b.updated_at) - new Date(a.updated_at);
+      state.conversations.sort(( a, b) => {
+        return new Date(b.updated_at) - new Date(a.updated_at);
       });
       return state.conversations.map(conversation => ({
-          ...conversation
-          //TODO
+        ...conversation
+        //TODO
       }));
     },
     conversation(state, getters) {
-      
-      //TODO
-    },
-    orderConversations() {
-        this.conversations.sort( ( a, b) => {
-            return  new Date(b.updated_at) - new Date(a.updated_at);
-        });
-        return this.conversations;
+      let conver;
+      state.conversations.forEach(conversation => {
+        if (conversation.id === state.currentConversationId) {
+          conver = conversation;
+        }
+      });
+      return conver;
     }
   },
   mutations: {
@@ -89,8 +88,18 @@ export default new Vuex.Store({
       state.conversations.push(conversation);
     },
     loadConversations(state, conversations){
-      state.conversations=conversations;
-
+      conversations.forEach((conversation) => {
+        conversation.title = conversation.participants.join();
+      });
+      state.conversations = conversations;
+    },
+    upsertConversationMessages(state, { conversation_id, message }) {
+      state.conversations.forEach(conversation => {
+        if (conversation.id === conversation_id) {
+          console.log(message);
+          conversation.messages.push(message);
+        }
+      });
     }
   },
   actions: {
@@ -169,12 +178,21 @@ export default new Vuex.Store({
 
       return promise;
     },
-    initConversations({commit}){
+    initConversations({ commit }){
       const promise = Vue.prototype.$client.getConversations();
       promise.then(({ conversations }) => {
-        commit("loadConversations",conversations);
+        commit("loadConversations", conversations);
       });
       return promise;
+    },
+    postMessage({ commit }, { currentConversationId, message }) {
+      const promise = Vue.prototype.$client.postMessage(
+        currentConversationId,
+        message
+      );
+      promise.then(({ conversation_id, content }) => {
+        commit("upsertConversationMessages", { conversation_id, content });
+      });
     }
   }
 });

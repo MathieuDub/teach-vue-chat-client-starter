@@ -15,16 +15,10 @@
       </div>
     </div>
     <div class="users">
-
-
       <div v-for="(user,index) in search_users" :key="user.username" :ref="user.username" :class="{ user, selected:users_selected.includes(user.username)?true : false }"  @click="user_selected(user.username,index)">
-      <img :src= user.picture_url  /><span
-          class=""
-          >{{user.username}}</span
-        >
+        <img :src=user.picture_url  />
+        <span class="">{{ user.username }}</span>
       </div>
-      
-
     </div>
 
     <div class="actions" v-show="users_selected.length>=1">
@@ -51,34 +45,29 @@ export default {
   },
   methods: {
     ...mapActions(["createOneToOneConversation","createManyToManyConversation"]),
-    
     openConversation() {
       if(this.users_selected.length > 1 ){
-      let promise = this.createManyToManyConversation(this.users_selected);
-
-      promise.finally(() => {
-        console.log("Conversation ouverte !");
-      });
-      }else{
+        let promise = this.createManyToManyConversation(this.users_selected);
+        promise.finally(() => {
+          console.log("Conversation ouverte !");
+        });
+      }else {
         let promise = this.createOneToOneConversation(this.users_selected[0]);
 
-      promise.finally(() => {
-        console.log("Conversation ouverte !");
-      });
+        promise.finally(() => {
+          console.log("Conversation ouverte !");
+        });
       }
     },
     user_selected(username,index){
 
       
       if(this.users_selected.includes(username)){
-      
-      this.users_selected.splice(this.users_selected.indexOf(username),1)
-
+        this.users_selected.splice(this.users_selected.indexOf(username),1)
       }else{
       this.users_selected.push(username)
       }
       //this.$refs[username][0].className += " selected";
-      
     }
   },
   computed: {
