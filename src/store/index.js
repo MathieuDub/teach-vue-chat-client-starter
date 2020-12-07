@@ -28,23 +28,30 @@ export default new Vuex.Store({
       return state.user;
     },
     users(state) {
-      
+
       return state.users.map(user => ({
         ...user
         //TODO
       }));
     },
     conversations(state) {
-      return state.conversations.map(conversation => {
-        return {
+      state.conversations.sort( ( a, b) => {
+        return  new Date(b.updated_at) - new Date(a.updated_at);
+      });
+      return state.conversations.map(conversation => ({
           ...conversation
           //TODO
-        };
-      });
+      }));
     },
     conversation(state, getters) {
       
       //TODO
+    },
+    orderConversations() {
+        this.conversations.sort( ( a, b) => {
+            return  new Date(b.updated_at) - new Date(a.updated_at);
+        });
+        return this.conversations;
     }
   },
   mutations: {
@@ -78,7 +85,12 @@ export default new Vuex.Store({
     },
 
     upsertConversation(state, { conversation }) {
-      //TODO
+      conversation.title=conversation.participants.join();
+      state.conversations.push(conversation);
+    },
+    loadConversations(state, conversations){
+      state.conversations=conversations;
+
     }
   },
   actions: {
@@ -126,8 +138,8 @@ export default new Vuex.Store({
       );
 
       promise.then(({ conversation }) => {
-        // commit("upsertConversation", {
-        //   conversation
+        //commit("upsertConversation", {
+        //  conversation
         // });
 
         router.push({
@@ -145,9 +157,9 @@ export default new Vuex.Store({
       );
 
       promise.then(({ conversation }) => {
-        // commit("upsertConversation", {
-        //   conversation
-        // });
+        //commit("upsertConversation", {
+        //  conversation
+        //});
 
         router.push({
           name: "Conversation",
@@ -155,6 +167,13 @@ export default new Vuex.Store({
         });
       });
 
+      return promise;
+    },
+    initConversations({commit}){
+      const promise = Vue.prototype.$client.getConversations();
+      promise.then(({ conversations }) => {
+        commit("loadConversations",conversations);
+      });
       return promise;
     }
   }
