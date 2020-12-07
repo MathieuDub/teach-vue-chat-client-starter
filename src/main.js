@@ -21,5 +21,4 @@ new Vue({
 }).$mount("#app");
 
 router.push({ name: "Community" });
-
 Vue.use(client, store);
