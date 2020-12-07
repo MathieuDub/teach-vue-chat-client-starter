@@ -372,6 +372,9 @@ export default {
       groupPanel: false
     };
   },
+  created() {
+    console.log(this.conversation);
+  },
   mounted() {
     this.scrollBottom();
   },

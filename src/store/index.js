@@ -28,6 +28,7 @@ export default new Vuex.Store({
       return state.user;
     },
     users(state) {
+      
       return state.users.map(user => ({
         ...user
         //TODO
@@ -42,6 +43,7 @@ export default new Vuex.Store({
       });
     },
     conversation(state, getters) {
+      
       //TODO
     }
   },
@@ -120,6 +122,25 @@ export default new Vuex.Store({
 
     createOneToOneConversation({ commit }, username) {
       const promise = Vue.prototype.$client.getOrCreateOneToOneConversation(
+        username
+      );
+
+      promise.then(({ conversation }) => {
+        // commit("upsertConversation", {
+        //   conversation
+        // });
+
+        router.push({
+          name: "Conversation",
+          params: { id: conversation.id }
+        });
+      });
+
+      return promise;
+    },
+
+    createManyToManyConversation({ commit }, username) {
+      const promise = Vue.prototype.$client.createManyToManyConversation(
         username
       );
 

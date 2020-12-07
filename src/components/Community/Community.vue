@@ -4,6 +4,7 @@
       <div class="ui fluid search">
         <div class="ui icon input">
           <input
+            v-model="search"
             class="prompt"
             type="text"
             placeholder="Rechercher un utilisateur"
@@ -14,49 +15,23 @@
       </div>
     </div>
     <div class="users">
-      <div class="selected user">
-        <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" /><span
+
+
+      <div v-for="(user,index) in search_users" :key="user.username" :ref="user.username" :class="{ user, selected:users_selected.includes(user.username)?true : false }"  @click="user_selected(user.username,index)">
+      <img :src= user.picture_url  /><span
           class=""
-          >Bob</span
+          >{{user.username}}</span
         >
       </div>
-      <div class="user">
-        <img src="https://source.unsplash.com/8wbxjJBrl3k/100x100" /><span
-          class=""
-          >Cha</span
-        >
-      </div>
-      <div class="user">
-        <img src="https://source.unsplash.com/FUcupae92P4/100x100" /><span
-          class="available"
-          >Derek</span
-        >
-      </div>
-      <div class="user">
-        <img src="https://source.unsplash.com/4U1x6459Q-s/100x100" /><span
-          class=""
-          >Emilio</span
-        >
-      </div>
-      <div class="selected user">
-        <img src="https://source.unsplash.com/3402kvtHhOo/100x100" /><span
-          class="available"
-          >Fabrice</span
-        >
-      </div>
-      <div class="user">
-        <img src="https://source.unsplash.com/OYH7rc2a3LA/100x100" /><span
-          class=""
-          >Gael</span
-        >
-      </div>
+      
+
     </div>
 
-    <div class="actions">
+    <div class="actions" v-show="users_selected.length>=1">
       <button class="ui primary big button" @click="openConversation">
         <i class="conversation icon"></i>
         <span>
-          Ouvrir la conversation (2)
+          Ouvrir une conversation ({{users_selected.length}})
         </span>
       </button>
     </div>
@@ -69,20 +44,53 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Community",
   data() {
-    return {};
+    return {
+      search: "",
+      users_selected: []
+    };
   },
   methods: {
-    ...mapActions(["createOneToOneConversation"]),
+    ...mapActions(["createOneToOneConversation","createManyToManyConversation"]),
+    
     openConversation() {
-      let promise = this.createOneToOneConversation("Alice");
+      if(this.users_selected.length > 1 ){
+      let promise = this.createManyToManyConversation(this.users_selected);
 
       promise.finally(() => {
         console.log("Conversation ouverte !");
       });
+      }else{
+        let promise = this.createOneToOneConversation(this.users_selected[0]);
+
+      promise.finally(() => {
+        console.log("Conversation ouverte !");
+      });
+      }
+    },
+    user_selected(username,index){
+
+      
+      if(this.users_selected.includes(username)){
+      
+      this.users_selected.splice(this.users_selected.indexOf(username),1)
+
+      }else{
+      this.users_selected.push(username)
+      }
+      //this.$refs[username][0].className += " selected";
+      
     }
   },
   computed: {
-    ...mapGetters(["users"])
+    ...mapGetters(["users"]),
+    search_users(){
+      let filteredUsers;
+      filteredUsers = this.users.filter((todo) =>
+        todo.username.toLowerCase().includes(this.search.toLowerCase())
+      );
+
+      return filteredUsers;
+    }
   }
 };
 </script>
