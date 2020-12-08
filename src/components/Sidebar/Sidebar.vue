@@ -51,7 +51,8 @@
       </div>
       <div v-for="conversation in search_conversations" :key="conversation.id" class="conversation new" :title="conversation.title" @click="openConversation(conversation.id)">
         <a class="avatar">
-          <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" />
+          <i v-if="conversation.participants.length > 2" class="ui users icon"></i>
+          <img v-else :src=getPicture(conversation.participants[1])>
         </a>
         <div class="content">
           <div class="metadata">
@@ -89,10 +90,19 @@ export default {
     },
     openConversation(id) {
       router.push({ name: "Conversation", params: { id } });
+    },
+    getPicture(username) {
+      let picture;
+      this.users.forEach((user) => {
+        if (user.username === username) {
+          picture = user.picture_url;
+        }
+      });
+      return picture;
     }
   },
   computed: {
-    ...mapGetters(["user", "conversations"]),
+    ...mapGetters(["user", "conversations", "users"]),
     search_conversations(){
       let filteredConversations;
       filteredConversations = this.conversations.filter((conversation) =>
@@ -101,8 +111,7 @@ export default {
 
       return filteredConversations;
     }
-  },
-  
+  }
 };
 </script>
 

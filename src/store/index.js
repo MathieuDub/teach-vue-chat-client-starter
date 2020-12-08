@@ -28,7 +28,6 @@ export default new Vuex.Store({
       return state.user;
     },
     users(state) {
-
       return state.users.map(user => ({
         ...user
         //TODO

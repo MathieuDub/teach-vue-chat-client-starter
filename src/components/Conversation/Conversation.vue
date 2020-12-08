@@ -1,15 +1,14 @@
 <template>
   <div class="conversation">
     <div class="conversation-header">
-<!--            <img-->
-<!--              class="avatar"-->
-<!--              src="https://source.unsplash.com/FUcupae92P4/100x100"-->
-<!--            />-->
+<!--                  <img-->
+<!--                    class="avatar"-->
+<!--                    src="https://source.unsplash.com/FUcupae92P4/100x100"-->
+<!--                  />-->
       <div class="avatar">
         <i class="ui users icon"></i>
-
       </div>
-<!--      v-if="conversation-->
+      <!--      v-if="conversation-->
       <div class="title">
         <div class="ui compact">
           <i class="icon circle"></i>
@@ -48,39 +47,12 @@
       <div class="conversation-main">
         <div class="conversation-body" id="scroll">
           <div class="wrapper">
-            <div class="time">01:32:08</div>
-            <div class="message mine">
-              <div class="bubble top bottom">{{ conversation.messages }}</div>
-              <div class="reacts"></div>
-              <div class="controls">
-                <i title="Supprimer" class="circular trash icon"></i>
-                <i title="Editer" class="circular edit icon"></i>
-                <i title="Répondre" class="circular reply icon"></i>
+            <div v-for="message in conversation.messages" :key="message.id">
+              <div class="time">
+                {{ new Date(message.posted_at).toLocaleTimeString() }}
               </div>
-            </div>
-            <div class="time">01:32:14</div>
-            <div class="message">
-              <img
-                title="Bob"
-                src="https://source.unsplash.com/7omHUGhhmZ0/100x100"
-              />
-              <div class="bubble top bottom">Hello !</div>
-              <div class="reacts"></div>
-              <div class="controls">
-                <i title="Répondre" class="circular reply icon"></i
-                ><span class="react"
-                  ><i title="Aimer" class="circular heart outline icon"></i
-                  ><i
-                    title="Pouce en l'air"
-                    class="circular thumbs up outline icon"
-                  ></i
-                  ><i title="Content" class="circular smile outline icon"></i
-                  ><i
-                    title="Pas content"
-                    class="circular frown outline icon"
-                  ></i
-                ></span>
-              </div>
+              <mine-message v-if="message.from === user.username" :message="message.content"></mine-message>
+              <their-message v-else :message="message.content" :from="message.from" :picture="getPicture(message.from)"></their-message>
             </div>
             <div class="view">
               <img
@@ -116,7 +88,12 @@
                   class="prompt"
                   type="text"
                   placeholder="Rédiger un message"
-                  @keyup.enter="postMessage({ currentConversationId: conversation.id, message: message })"
+                  @keyup.enter="
+                    postMessage({
+                      currentConversationId: conversation.id,
+                      message: message
+                    })
+                  "
                 />
                 <i class="send icon"></i>
               </div>
@@ -133,11 +110,13 @@
 
 <script>
 import Group from "@/components/Group/Group";
+import MineMessage from "./MineMessage";
+import TheirMessage from "./TheirMessage";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Conversation",
-  components: { Group },
+  components: { Group, MineMessage, TheirMessage },
   data() {
     return {
       groupPanel: false,
@@ -146,6 +125,7 @@ export default {
   },
   created() {
     console.log(this.conversation);
+    console.log(this.users);
   },
   mounted() {
     this.scrollBottom();
@@ -154,7 +134,7 @@ export default {
     this.scrollBottom();
   },
   computed: {
-    ...mapGetters(["conversation"]),
+    ...mapGetters(["conversation", "user", "users"])
   },
   methods: {
     ...mapActions(["postMessage"]),
@@ -167,6 +147,16 @@ export default {
           ).scrollHeight;
         }
       }, 0);
+    },
+    getPicture(name) {
+      let picture;
+      this.users.forEach((user) => {
+        if (user.username === name) {
+          picture = user.picture_url;
+        }
+      });
+      console.log(picture);
+      return picture;
     }
   },
   watch: {
