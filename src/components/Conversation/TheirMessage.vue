@@ -9,7 +9,7 @@
       <i v-show="countSad > 0" title="Pas content" class="circular frown outline icon">{{ countSad }}</i>
     </div>
     <div class="controls">
-      <i class="circular reply icon" title="Répondre"></i>
+      <i class="circular reply icon" title="Répondre" @click="addReply({message_id: message.id, message_content: message.content})"></i>
       <span class="react">
         <i
           class="circular heart outline icon"
@@ -52,7 +52,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addReact"])
+    ...mapActions(["addReact", "addReply"])
   },
   computed: {
     countHeart() {

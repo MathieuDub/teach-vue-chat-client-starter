@@ -49,17 +49,17 @@
           </div>
         </div>
       </div>
-      <div v-for="conversation in search_conversations" :key="conversation.id" class="conversation new" :title="conversation.title" @click="openConversation(conversation.id)">
+      <div v-for="currConversation in search_conversations" :key="currConversation.id" :class="{conversation: true, new: true, selected: currConversation.id === conversation.id}" :title="currConversation.title" @click="openConversation(currConversation.id)">
         <a class="avatar">
-          <i v-if="conversation.participants.length > 2" class="ui users icon"></i>
-          <img v-else :src=getPicture(conversation.participants[1]) alt="test">
+          <i v-if="currConversation.participants.length > 2" class="ui users icon"></i>
+          <img v-else :src=getPicture(currConversation.participants[1])>
         </a>
         <div class="content">
           <div class="metadata">
-            <div class="title"><i class="ui small icon circle"> </i> {{conversation.title}}</div>
-            <span class="time">{{conversation.updated_at}}</span>
+            <div class="title"><i class="ui small icon circle"> </i> {{currConversation.title}}</div>
+            <span class="time">{{new Date(currConversation.updated_at).toLocaleTimeString()}}</span>
           </div>
-          <div class="text">{{conversation.messages[-1]}}</div>
+          <div class="text">{{currConversation.messages[-1]}}</div>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["user", "conversations", "users"]),
+    ...mapGetters(["user", "conversations", "users", "conversation"]),
     search_conversations(){
       let filteredConversations;
       filteredConversations = this.conversations.filter((conversation) =>

@@ -109,6 +109,13 @@ export default new Vuex.Store({
           });
         }
       });
+    },
+    removeConversationMessages(state, { conversation_id, message_id }) {
+      state.conversations.forEach(conversation => {
+        if (conversation.id === conversation_id) {
+          conversation.messages.splice(conversation.messages.findIndex((message) => message.id === message_id), 1);
+        }
+      });
     }
   },
   actions: {
@@ -223,6 +230,22 @@ export default new Vuex.Store({
       );
       promise.then(({ conversation_id, content }) => {
         context.commit("upsertMessagesReaction", { conversation_id, content });
+      });
+    },
+    addReply(context, payload) {
+      const promise = Vue.prototype.$client.replyMessage(
+        context.state.currentConversationId,
+        payload.message_id,
+        payload.message_content
+      );
+    },
+    eraseMessage(context, payload) {
+      const promise = Vue.prototype.$client.deleteMessage(
+        context.state.currentConversationId,
+        payload.message_id
+      );
+      promise.then(({ conversation_id, message_id }) => {
+        context.commit("removeConversationMessages", { conversation_id, message_id })
       });
     }
   }
