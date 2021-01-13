@@ -15,7 +15,7 @@
       <span>Participants</span>
       <hr />
     </div>
-    <div v-for="user in conversation.participants" :key="user" class="user">
+    <div v-for="user in search_participants" :key="user" class="user">
       <img :src="getPicture(user)" />
       <span>{{ user }}<br /><i class="nickname"></i> </span>
       <i title="Modifier le surnom" class="circular quote left link icon"> </i>
@@ -64,6 +64,14 @@ export default {
         }
       });
       return communityUsers;
+    },
+    search_participants(){
+      let filteredParticipants;
+      filteredParticipants = this.conversation.participants.filter((participant) =>
+          participant.toLowerCase().includes(this.search.toLowerCase())
+      )
+      console.log(filteredParticipants);
+      return filteredParticipants;
     }
   },
   methods: {

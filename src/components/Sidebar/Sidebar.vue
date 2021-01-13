@@ -106,7 +106,7 @@ export default {
     search_conversations(){
       let filteredConversations;
       filteredConversations = this.conversations.filter((conversation) =>
-        conversation.title? conversation.title.toLowerCase().includes(this.search.toLowerCase()): ""
+        conversation.title ? conversation.title.toLowerCase().includes(this.search.toLowerCase()): ""
       );
 
       return filteredConversations;
