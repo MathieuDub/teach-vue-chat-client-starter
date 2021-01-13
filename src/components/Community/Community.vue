@@ -60,8 +60,6 @@ export default {
       }
     },
     user_selected(username,index){
-
-      
       if(this.users_selected.includes(username)){
         this.users_selected.splice(this.users_selected.indexOf(username),1)
       }else{

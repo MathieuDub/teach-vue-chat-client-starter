@@ -34,6 +34,7 @@ export default new Vuex.Store({
       }));
     },
     conversations(state) {
+      // console.log(state.conversations);
       state.conversations.sort(( a, b) => {
         return new Date(b.updated_at) - new Date(a.updated_at);
       });
@@ -83,7 +84,8 @@ export default new Vuex.Store({
     },
 
     upsertConversation(state, { conversation }) {
-      conversation.title=conversation.participants.join();
+      conversation.title = conversation.participants.join();
+      state.conversations.splice(state.conversations.findIndex((conver) => conver.id === conversation.id),1)
       state.conversations.push(conversation);
     },
     loadConversations(state, conversations){
@@ -95,7 +97,7 @@ export default new Vuex.Store({
     upsertConversationMessages(state, { conversation_id, message }) {
       state.conversations.forEach(conversation => {
         if (conversation.id === conversation_id) {
-          console.log(message);
+          // console.log(message);
           conversation.messages.push(message);
         }
       });
@@ -192,6 +194,18 @@ export default new Vuex.Store({
       promise.then(({ conversation_id, content }) => {
         commit("upsertConversationMessages", { conversation_id, content });
       });
+    },
+    addParticipant(context, username) {
+      const promise = Vue.prototype.$client.addParticipant(
+        context.state.currentConversationId,
+        username
+      );
+    },
+    delParticipant(context, username) {
+      const promise = Vue.prototype.$client.removeParticipant(
+        context.state.currentConversationId,
+        username
+      );
     }
   }
 });

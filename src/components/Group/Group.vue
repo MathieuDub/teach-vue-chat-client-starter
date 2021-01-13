@@ -3,6 +3,7 @@
     <div class="ui fluid search">
       <div class="ui icon input">
         <input
+          v-model="search"
           type="text"
           placeholder="Rechercher un utilisateur"
           class="prompt"
@@ -14,43 +15,16 @@
       <span>Participants</span>
       <hr />
     </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/mK_sjD0FrXw/100x100" /><span
-        >Alice<br /><i class="nickname"></i></span
-      ><i title="Modifier le surnom" class="circular quote left link icon"></i
-      ><i
+    <div v-for="user in conversation.participants" :key="user" class="user">
+      <img :src="getPicture(user)" />
+      <span>{{ user }}<br /><i class="nickname"></i> </span>
+      <i title="Modifier le surnom" class="circular quote left link icon"> </i>
+      <i
+        v-if="conversation.participants.length > 3"
         title="Enlever de la conversation"
         class="circular times icon link"
         style=""
-      ></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/7omHUGhhmZ0/100x100" /><span
-        >Bob<br /><i class="nickname"></i></span
-      ><i title="Modifier le surnom" class="circular quote left link icon"></i
-      ><i
-        title="Enlever de la conversation"
-        class="circular times icon link"
-        style=""
-      ></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/FUcupae92P4/100x100" /><span
-        >Derek<br /><i class="nickname"></i></span
-      ><i title="Modifier le surnom" class="circular quote left link icon"></i
-      ><i
-        title="Enlever de la conversation"
-        class="circular times icon link"
-      ></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/OYH7rc2a3LA/100x100" /><span
-        >Gael<br /><i class="nickname"></i></span
-      ><i title="Modifier le surnom" class="circular quote left link icon"></i
-      ><i
-        title="Enlever de la conversation"
-        class="circular times icon link"
-        style=""
+        @click="delParticipant(user)"
       ></i>
     </div>
     <div class="spanner">
@@ -58,25 +32,13 @@
       <span>Communauté</span>
       <hr />
     </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/8wbxjJBrl3k/100x100" /><span
-        >Cha</span
-      ><i title="Ajouter à la conversation" class="circular plus icon link"></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/4U1x6459Q-s/100x100" /><span
-        >Emilio</span
-      ><i title="Ajouter à la conversation" class="circular plus icon link"></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/3402kvtHhOo/100x100" /><span
-        >Fabrice</span
-      ><i title="Ajouter à la conversation" class="circular plus icon link"></i>
-    </div>
-    <div class="user">
-      <img src="https://source.unsplash.com/tNCH0sKSZbA/100x100" /><span
-        >Benji</span
-      ><i title="Ajouter à la conversation" class="circular plus icon link"></i>
+    <div v-for="user in community" :key="user.username" class="user">
+      <img :src="user.picture_url" /><span>{{ user.username }}</span>
+      <i
+        title="Ajouter à la conversation"
+        class="circular plus icon link"
+        @click="addParticipant(user.username)"
+      ></i>
     </div>
   </div>
 </template>
@@ -91,11 +53,30 @@ export default {
       search: ""
     };
   },
+  created() {},
   computed: {
-    ...mapGetters([])
+    ...mapGetters(["conversation", "users"]),
+    community() {
+      let communityUsers = [];
+      this.users.forEach(user => {
+        if (!this.conversation.participants.includes(user.username)) {
+          communityUsers.push(user);
+        }
+      });
+      return communityUsers;
+    }
   },
   methods: {
-    ...mapActions([])
+    ...mapActions(["addParticipant", "delParticipant"]),
+    getPicture(name) {
+      let picture;
+      this.users.forEach(user => {
+        if (user.username === name) {
+          picture = user.picture_url;
+        }
+      });
+      return picture;
+    }
   }
 };
 </script>

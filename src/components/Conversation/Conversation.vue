@@ -1,18 +1,16 @@
 <template>
   <div class="conversation">
     <div class="conversation-header">
-<!--                  <img-->
-<!--                    class="avatar"-->
-<!--                    src="https://source.unsplash.com/FUcupae92P4/100x100"-->
-<!--                  />-->
-      <div class="avatar">
+      <div v-if="conversation.participants.length > 2" class="avatar">
         <i class="ui users icon"></i>
       </div>
-      <!--      v-if="conversation-->
+      <img v-else class="avatar" :src=getPicture(conversation.participants[1]) />
       <div class="title">
         <div class="ui compact">
+          <!-- todo: when connected -->
           <i class="icon circle"></i>
-          <span>Groupe: {{ conversation.title }}</span>
+          <span v-if="conversation.participants.length > 2">Groupe: {{ conversation.title }}</span>
+          <span v-else>{{ conversation.title }}</span>
           <div class="ui simple dropdown item">
             <i class="vertical ellipsis icon"></i>
 
@@ -89,10 +87,8 @@
                   type="text"
                   placeholder="Rédiger un message"
                   @keyup.enter="
-                    postMessage({
-                      currentConversationId: conversation.id,
-                      message: message
-                    })
+                    postMessage({ currentConversationId: conversation.id, message: message}),
+                    clear()
                   "
                 />
                 <i class="send icon"></i>
@@ -124,8 +120,9 @@ export default {
     };
   },
   created() {
-    console.log(this.conversation);
-    console.log(this.users);
+    // console.log(this.conversation);
+    // console.log('users');
+    // console.log(this.users);
   },
   mounted() {
     this.scrollBottom();
@@ -155,14 +152,15 @@ export default {
           picture = user.picture_url;
         }
       });
-      console.log(picture);
       return picture;
+    },
+    clear() {
+      this.message = "";
     }
   },
   watch: {
     // eslint-disable-next-line no-unused-vars
     conversation(newConversation, oldConversation) {
-      console.log(newConversation);
       this.scrollBottom();
     }
   }

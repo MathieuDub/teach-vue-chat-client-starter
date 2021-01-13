@@ -52,7 +52,7 @@
       <div v-for="conversation in search_conversations" :key="conversation.id" class="conversation new" :title="conversation.title" @click="openConversation(conversation.id)">
         <a class="avatar">
           <i v-if="conversation.participants.length > 2" class="ui users icon"></i>
-          <img v-else :src=getPicture(conversation.participants[1])>
+          <img v-else :src=getPicture(conversation.participants[1]) alt="test">
         </a>
         <div class="content">
           <div class="metadata">
@@ -81,7 +81,7 @@ export default {
     this.initConversations();
   },
   methods: {
-    ...mapActions(["deauthenticate","initConversations"]),
+    ...mapActions(["deauthenticate", "initConversations"]),
     openCommunity() {
       router.push({ name: "Community" });
     },
