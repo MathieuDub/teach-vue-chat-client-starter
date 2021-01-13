@@ -49,8 +49,8 @@
               <div class="time">
                 {{ new Date(message.posted_at).toLocaleTimeString() }}
               </div>
-              <mine-message v-if="message.from === user.username" :message="message.content"></mine-message>
-              <their-message v-else :message="message.content" :from="message.from" :picture="getPicture(message.from)"></their-message>
+              <mine-message v-if="message.from === user.username" :message="message"></mine-message>
+              <their-message v-else :message="message" :from="message.from" :picture="getPicture(message.from)"></their-message>
             </div>
             <div class="view">
               <img
@@ -120,9 +120,10 @@ export default {
     };
   },
   created() {
-    // console.log(this.conversation);
+    console.log(this.conversation);
     // console.log('users');
     // console.log(this.users);
+
   },
   mounted() {
     this.scrollBottom();

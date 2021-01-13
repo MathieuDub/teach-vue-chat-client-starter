@@ -68,7 +68,6 @@ export default new Vuex.Store({
     setUsers(state, users) {
       state.users = users;
     },
-
     upsertUser(state, { user }) {
       const localUserIndex = state.users.findIndex(
         _user => _user.username === user.username
@@ -82,7 +81,6 @@ export default new Vuex.Store({
         });
       }
     },
-
     upsertConversation(state, { conversation }) {
       conversation.title = conversation.participants.join();
       state.conversations.splice(state.conversations.findIndex((conver) => conver.id === conversation.id),1)
@@ -97,8 +95,18 @@ export default new Vuex.Store({
     upsertConversationMessages(state, { conversation_id, message }) {
       state.conversations.forEach(conversation => {
         if (conversation.id === conversation_id) {
-          // console.log(message);
           conversation.messages.push(message);
+        }
+      });
+    },
+    upsertMessagesReaction(state, { conversation_id, message }) {
+      state.conversations.forEach(conversation => {
+        if (conversation.id === conversation_id) {
+          conversation.messages.forEach((currMessage) => {
+            if(currMessage.id === message.id) {
+              currMessage.reactions = message.reactions;
+            }
+          });
         }
       });
     }
@@ -206,6 +214,16 @@ export default new Vuex.Store({
         context.state.currentConversationId,
         username
       );
+    },
+    addReact(context, payload) {
+      const promise = Vue.prototype.$client.reactMessage(
+        context.state.currentConversationId,
+        payload.message_id,
+        payload.reaction
+      );
+      promise.then(({ conversation_id, content }) => {
+        context.commit("upsertMessagesReaction", { conversation_id, content });
+      });
     }
   }
 });

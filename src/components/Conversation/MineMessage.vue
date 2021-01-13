@@ -1,6 +1,6 @@
 <template>
   <div class="message mine">
-    <div class="bubble top bottom">{{ message }}</div>
+    <div class="bubble top bottom">{{ message.content }}</div>
     <div class="reacts"></div>
     <div class="controls">
       <i title="Supprimer" class="circular trash icon"></i>

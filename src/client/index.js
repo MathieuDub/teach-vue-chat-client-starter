@@ -53,7 +53,7 @@ export default function install(Vue, store) {
   });
 
   client.on("messageReacted", async ({ conversation_id, message }) => {
-    //TODO
+    store.commit("upsertMessagesReaction", { conversation_id, message });
   });
 
   client.on("messageEdited", async ({ conversation_id, message }) => {
